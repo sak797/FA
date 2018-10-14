@@ -9,6 +9,14 @@ class Graph:
     def addEdge(self, u, v):
         self.graph[u].append(v)
 
+    def number_ofvertices(self):
+        temp_set = set()
+        for svertex in list(self.graph):
+            temp_set.add(svertex)
+            for dvertex in self.graph[svertex]:
+                temp_set.add(dvertex)
+        return len(temp_set)
+
     def BFS(self, s):
         visited = [False]*len(self.graph) # use hashmaps if strings
         queue = []
@@ -66,6 +74,18 @@ class UGraph():
         self.graph[u].append([v, w])
         self.graph[v].append([u, w])
 
+    def convert(self):
+        unique_edges = set()
+        for svertex in list(self.graph):
+            for dvertex in self.graph[svertex]:
+                temp1 = (svertex, dvertex[0], dvertex[1])
+                temp2 = (dvertex[0], svertex, dvertex[1])
+                if temp1 in unique_edges or temp2 in unique_edges:
+                    pass
+                else:
+                    unique_edges.add(temp1)
+        return list(unique_edges)
+
     def PrimMST(self): # doesn't have the complexity ElogV. It is more. I need to use specialized heap where I know the positions of my vertices in heap in O(1)
         heap = []
         for vertex in list(self.graph):
@@ -95,19 +115,9 @@ class UGraph():
         result = []
         count1 = 0
         count2 = 0
-        # convert self.graph to [u,v,w]
-        unique_edges = set()
-        for svertex in list(self.graph):
-            for dvertex in self.graph[svertex]:
-                temp1 = (svertex, dvertex[0], dvertex[1])
-                temp2 = (dvertex[0], svertex, dvertex[1])
-                if temp1 in unique_edges or temp2 in unique_edges:
-                    pass
-                else:
-                    unique_edges.add(temp1)
-
+        unique_edges = self.convert()
         unique_edges = sorted(unique_edges, key = lambda x: x[2])
-        print(unique_edges)
+        #print(unique_edges)
         uf = unionfind.UF(len(self.graph))
         while count1 < len(self.graph) and count2 < len(unique_edges):
             temp = unique_edges[count2]
@@ -120,6 +130,56 @@ class UGraph():
                 count1 += 1
         for item in result:
             print(item[0], " --> ", item[1])
+
+    def BellmanFord(self, vertex):
+        unique_edges = self.convert()
+        dist = [999]*len(self.graph)
+        dist[vertex] = 0
+        for i in range(len(self.graph)-1):
+            for [u,v,w] in unique_edges:
+                if dist[u] != 999 and dist[u] + w < dist[v]:
+                    dist[v] = dist[u] + w
+                if dist[v] != 999 and dist[v] + w < dist[u]:
+                    dist[u] = dist[v] + w
+        #negative cycle check
+        for [u,v,w] in unique_edges:
+            if dist[u] != 999 and dist[u] + w < dist[v]:
+                print("Negative cycle")
+
+        #Print the distances from vertex
+        for i in range(len(dist)):
+            print("dist of ",i, " is ",dist[i])
+
+
+    def Dijkstra(self, ver):
+        heap = []
+        for vertex in list(self.graph):
+            if ver==vertex:
+                heapq.heappush(heap, [0, vertex])
+            else:
+                heapq.heappush(heap, [9999, vertex])
+        heapq.heapify(heap)
+        distance = [999]*len(self.graph)
+        #distance[heap[0][1]] = 0
+        while len(heap):
+            node = heapq.heappop(heap)
+            distance[node[1]] = node[0]
+            # find the dnode in heap and update the distance
+            for dnode in self.graph[node[1]]:
+                dest, dist = dnode
+                for i in range(len(heap)):
+                    if heap[i][1] == dest:
+                        if distance[node[1]] + dist < heap[i][0]:
+                            heap[i][0] = distance[node[1]] + dist
+                            heapq.heapify(heap)
+                            break
+        # Print the distances from vertex
+        for i in range(len(dist)):
+            print("dist of ", i, " is ", dist[i])
+
+
+
+
 
 
 
@@ -147,7 +207,6 @@ if __name__ == '__main__':
     G.addEdge(3, 1)
     out = G.topologicalSort()
     print(out, end="\n")
-
     u = UGraph()
     u.addEdge(0, 1, 4)
     u.addEdge(0, 7, 8)
@@ -163,6 +222,11 @@ if __name__ == '__main__':
     u.addEdge(6, 7, 1)
     u.addEdge(6, 8, 6)
     u.addEdge(7, 8, 7)
+    print("Prim: ")
     u.PrimMST()
     print("Kruskal: ")
     u.KruskalMST()
+    print("Bellman Ford: ")
+    u.BellmanFord(0)
+    print("Dijkstra's: ")
+    u.BellmanFord(0)
