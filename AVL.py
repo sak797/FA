@@ -106,11 +106,9 @@ class AVL_Tree():
         else:
             if root.left is None:
                 temp = root.right
-                root = None
                 return temp
             elif root.right is None:
                 temp = root.left
-                root = None
                 return temp
             temp = self.minVal(root.right)
             root.val = temp.value

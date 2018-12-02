@@ -100,7 +100,7 @@ class UGraph():
             node = heapq.heappop(heap)
             # find the dnode in heap and update the distance
             for dnode in self.graph[node[1]]:
-                dest, dist = dnode
+                dest, dist = dnode # this dist is coming from graph
                 for i in range(len(heap)):
                     if heap[i][1] == dest:
                         if heap[i][0] > dist:
