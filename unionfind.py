@@ -27,5 +27,5 @@ if __name__ == '__main__':
         uf.union(p, q)
 
     for x in range(10):
-        print(uf.find(x))
+        print(x,uf.find(x))
 
