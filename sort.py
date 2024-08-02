@@ -6,7 +6,7 @@ def insertion_sort(lis):
         while prev>=0 and key <= lis[prev]:
             lis[prev+1] = lis[prev]
             prev = prev -1
-        lis[prev+1] = key
+            lis[prev+1] = key
     return lis
 
 def merge(l,r):
