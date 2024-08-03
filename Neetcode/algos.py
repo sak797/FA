@@ -13,3 +13,16 @@ def removeElement(arr, val):
             arr[l] = arr[r]
             l+=1
     return l
+
+# rmeove Kth samllerst element from BST
+def KthSamllestBST(root,k):
+    stack = []
+    while True:
+        while root:
+            stack.append(root)
+            root = root.left
+        root = stack.pop()
+        k -= 1
+        if not k:
+            return root.value
+        root = root.right
