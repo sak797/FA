@@ -1,3 +1,6 @@
+from collections import deque
+
+
 def removeDuplicates(arr):
     l = 1
     for r in range(1,len(arr)):
@@ -26,3 +29,23 @@ def KthSamllestBST(root,k):
         if not k:
             return root.value
         root = root.right
+
+def levelOrderBST(root):
+    if not root:
+        return root
+    res = []
+    queue = deque()
+    queue.append(root)
+    while queue:
+        qLen = len(queue)
+        level = []
+        for i in range(qLen):
+            node = queue.popleft()
+            if node:
+                level.append(node.value)
+                queue.append(node.left)
+                queue.append(node.right)
+        if level:
+            res.append(level)
+
+    return res
